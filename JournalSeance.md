@@ -20,3 +20,11 @@ Création du ```README.md```, définition des tests.\
 Echange avec le prof sur le sujet.\
 Renseignement sur manière de caractériser notre capteur.\
 Prise en main de capteur, communication Bluetooth, test du buzzer avec l'accéléromètre.
+
+
+## Séance 4 : 4 Octobre 2024
+
+- [ ] Exporter des donnés au format csv (du capteur)
+- [ ] Chercher capteur équivalent (non Arduino) et se renseigner sur la circuiterie autour
+- [ ] Création du fichier de rapport
+- [ ] Faire le fichier sur l'application Technique 

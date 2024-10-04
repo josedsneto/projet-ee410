@@ -9,6 +9,18 @@ Lorsqu'une chute est détectée :
 
 
 
+## Planning et Deadlines
+
+- 04 Octobre 2024 : Choix du système visé (Remettre une page décrivant le système
+imaginé, les mesures qui seront faites + toute autre info pertinente) \
+Le [lien](https://docs.google.com/document/d/1k7mpjtoi8ii_IY9sKmL_kZ1YLawBmLwHGLVDXy7D6bw/edit?usp=sharing) vers le document
+- 17 Octobre 2024 : Commande de composants 
+- 24 Octobre 2024 : Evaluation intermédiaire
+- 29 Novembre 2024 : Présentation orale
+- 06 Décembre 2023 : Rendu du rapport final écrit 
+
+
+
 ## Critères pour les profs
 
 L'idée est de faire une première application avec un module compatible Arduino. 
@@ -57,6 +69,7 @@ Il faut pouvoir obtenir le même résultat en faisant une même manip plusieurs 
 **Notes sur les chutes :**
 - Faire attention à l'orientation du capteur, son positionnement sur le témoin
 - Pouvoir reproduire la chute en toutes conditions
+
 
 
 
