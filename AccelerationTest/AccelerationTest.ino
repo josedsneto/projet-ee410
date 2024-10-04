@@ -116,7 +116,7 @@ void displayRange(void)
 
 void setup(void)
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   while (!Serial);
   Serial.println("Accelerometer Test"); Serial.println("");
 
@@ -150,16 +150,20 @@ void loop(void)
   accel.getEvent(&event);
 
   /* Display the results (acceleration is measured in m/s^2) */
-  Serial.print("X: "); Serial.print(event.acceleration.x); Serial.print("  ");
-  Serial.print("Y: "); Serial.print(event.acceleration.y); Serial.print("  ");
-  Serial.print("Z: "); Serial.print(event.acceleration.z); Serial.print("  ");Serial.println("m/s^2 ");
+//  Serial.print("X: "); Serial.print(event.acceleration.x); Serial.print("  ");
+//  Serial.print("Y: "); Serial.print(event.acceleration.y); Serial.print("  ");
+//  Serial.print("Z: "); Serial.print(event.acceleration.z); Serial.print("  ");Serial.println("m/s^2 ");
 
-  if (event.acceleration.x > 10)
-  {
-    Serial.print("sensor working");
-    digitalWrite(7, HIGH);
-    delay(15);
-    digitalWrite(7, LOW);
-  }
+Serial.print(event.acceleration.x);Serial.print(",");
+Serial.print(event.acceleration.y);Serial.print(",");
+Serial.println(event.acceleration.z);
+
+//  if (event.acceleration.x > 10)
+//  {
+//    Serial.print("sensor working");
+//    digitalWrite(7, HIGH);
+//    delay(15);
+//    digitalWrite(7, LOW);
+//  }
   delay(500);
 }

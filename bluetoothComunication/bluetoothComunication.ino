@@ -1,3 +1,6 @@
+int sensorPin = A0;      // The analog pin where your sensor is connected
+int sensorValue = 0;
+
 void setup() {
   Serial.begin(9600); // Set the baud rate to match with the Bluetooth module
 }
