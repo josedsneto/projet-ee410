@@ -24,7 +24,7 @@ Prise en main de capteur, communication Bluetooth, test du buzzer avec l'accél�
 
 ## Séance 4 : 4 Octobre 2024
 
-- [ ] Exporter des donnés au format csv (du capteur)
+- [X] Exporter des donnés au format csv (du capteur)
 - [ ] Chercher capteur équivalent (non Arduino) et se renseigner sur la circuiterie autour
 - [ ] Création du fichier de rapport
-- [ ] Faire le fichier sur l'application Technique 
+- [X] Faire le fichier sur l'application Technique 
