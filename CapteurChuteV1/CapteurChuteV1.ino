@@ -1,10 +1,10 @@
 #include <Wire.h>
 #include <ADXL345.h>
 
-#define FALL_LOW_LEVEL 0.7
-#define FALL_HIGH_LEVEL 1.3
+#define FALL_LOW_LEVEL 0.6
+#define FALL_HIGH_LEVEL 1.5
 // Time during which we look to see if there has been a peak in acceleration (in milliseconds)
-#define TIME_FALL_MAX_DETECTION 1000 
+#define TIME_FALL_MAX_DETECTION 500
 
 ADXL345 adxl; //variable adxl is an instance of the ADXL345 library
 double xyz[3];
@@ -90,12 +90,10 @@ void loop() {
   // ----- getValues and calculation
   getAccelerometerValues();
   module = sqrt(ax*ax + ay*ay + az*az); // We calculate de magnitude
-  printAccelerationAndModule();
+  // printAccelerationAndModule();
 
-  //runASM();
-
-
-
+  // The running of the fallDetector => Following an ASM
+  runASM();
 
 
   delay(100);
