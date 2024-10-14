@@ -73,3 +73,23 @@ Il faut pouvoir obtenir le même résultat en faisant une même manip plusieurs 
 
 
 
+# Capteur de chute V1
+
+On utilise le code ```CapteurChuteV1.ino```
+
+Lorsqu'une chute se passe voici ce que nous pouvons mesurer : 
+
+![Schéma temporel de la détection de chute](Images/DetectionChuteAvant_DONE.png)
+
+Lorsque le module passe en dessous du seuil bas, c'est le début de la chute : la gravité est compensée par la chute.\
+Puis on repasse au dessus du seuil haut, c'est lorsqu'on heurte le sol : gravité + impact avec le sol.
+
+
+Badé sur ce modèle, nous créons le code arduino ```CapteurChuteV1.ino```, qui utilise un diagramme d'état. \
+Voici son schéma : 
+
+![Diagramme Etat V1](<Images/Diagramme ASM/ASMFallDetectorV1.svg>)
+
+
+
+
