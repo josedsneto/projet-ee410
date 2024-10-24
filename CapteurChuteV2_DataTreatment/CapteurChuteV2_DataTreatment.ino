@@ -5,6 +5,7 @@
 #define FALL_HIGH_LEVEL 1.5
 // Time during which we look to see if there has been a peak in acceleration (in milliseconds)
 #define TIME_FALL_MAX_DETECTION 500
+#define BUTTONPIN 3
 
 ADXL345 adxl; //variable adxl is an instance of the ADXL345 library
 double xyz[3];
@@ -12,6 +13,8 @@ double xyz[3];
 double ax, ay, az; 
 double module;
 double maxModuleValue = 1;
+
+int buttonValue;
 
 // Enumeration of the differents states
 enum State {
@@ -28,6 +31,8 @@ long startTime;
 
 void setup() {
     Serial.begin(9600);
+    pinMode(BUTTONPIN, INPUT);
+
     adxl.powerOn();
 
     //set activity/ inactivity thresholds (0-255)
@@ -91,7 +96,10 @@ void loop() {
   getAccelerometerValues();
   module = sqrt(ax*ax + ay*ay + az*az); // We calculate de magnitude
   // printAccelerationAndModule();
-  printFormatJoseValues();
+
+  buttonValue = digitalRead(BUTTONPIN);
+
+  //printFormatJoseValues();
 
   // The running of the fallDetector => Following an ASM
   //runASM();
@@ -123,6 +131,16 @@ void printFormatJoseValues(){
   Serial.print("X="); Serial.print(ax); Serial.println(" g");
   Serial.print("Y="); Serial.print(ay); Serial.println(" g");
   Serial.print("Z="); Serial.print(az); Serial.println(" g");
+
+}
+
+void printFormatJoseValuesWithButton(){
+  Serial.println("****************************");
+  Serial.println("values of X , Y , Z: -1 , 2 , 23");
+  Serial.print("X="); Serial.print(ax); Serial.println(" g");
+  Serial.print("Y="); Serial.print(ay); Serial.println(" g");
+  Serial.print("Z="); Serial.print(az); Serial.println(" g");
+  Serial.print("BV="); Serial.println(buttonValue);
 
 }
 
