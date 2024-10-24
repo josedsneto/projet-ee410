@@ -91,9 +91,10 @@ void loop() {
   getAccelerometerValues();
   module = sqrt(ax*ax + ay*ay + az*az); // We calculate de magnitude
   // printAccelerationAndModule();
+  printFormatJoseValues();
 
   // The running of the fallDetector => Following an ASM
-  runASM();
+  //runASM();
 
 
   delay(100);
@@ -114,6 +115,15 @@ void printAccelerationAndModule(){
   Serial.print(az);
   Serial.print(",");
   Serial.println(module);
+}
+
+void printFormatJoseValues(){
+  Serial.println("****************************");
+  Serial.println("values of X , Y , Z: -1 , 2 , 23");
+  Serial.print("X="); Serial.print(ax); Serial.println(" g");
+  Serial.print("Y="); Serial.print(ay); Serial.println(" g");
+  Serial.print("Z="); Serial.print(az); Serial.println(" g");
+
 }
 
 void runASM() {

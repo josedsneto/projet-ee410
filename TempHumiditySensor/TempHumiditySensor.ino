@@ -6,6 +6,10 @@
 // - Adafruit Unified Sensor Lib: https://github.com/adafruit/Adafruit_Sensor
 #include <Arduino.h>
 #include <TM1637Display.h>
+#include <SoftwareSerial.h>
+
+//Serial config for bluetooth module
+SoftwareSerial mySerial(10, 11); // RX, TX
 
 // Module connection pins (Digital Pins)
 #define CLK 6
@@ -51,7 +55,9 @@ void setup() {
   Serial.println(F("DHTxx test!"));
   pinMode(BUTTONPIN, INPUT);
   
-  
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
 
   dht.begin();
 }
