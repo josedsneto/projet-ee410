@@ -99,23 +99,23 @@ void loop() {
 
   if (buttonValue == 1) {
     display.setBrightness(0x0f);
-    mySerial.print("Max temperature = ");
-    mySerial.println(maxTemperature);
+    Serial.print("Max temperature = ");
+    Serial.println(maxTemperature);
     int temp = maxTemperature;
     display.showNumberDec(temp, false);
   }
   else {
     display.setSegments(blank);
-    mySerial.print(F("Humidity: "));
-    mySerial.print(h);
-    mySerial.print(F("%  Temperature: "));
-    mySerial.print(t);
-    mySerial.print(F("°C "));
-    mySerial.print(f);
-    mySerial.print(F("°F  Heat index: "));
-    mySerial.print(hic);
-    mySerial.print(F("°C "));
-    mySerial.print(hif);
-    mySerial.println(F("°F"));
+    Serial.print(F("Humidity: "));
+    Serial.print(h);
+    Serial.print(F("%  Temperature: "));
+    Serial.print(t);
+    Serial.print(F("°C "));
+    Serial.print(f);
+    Serial.print(F("°F  Heat index: "));
+    Serial.print(hic);
+    Serial.print(F("°C "));
+    Serial.print(hif);
+    Serial.println(F("°F"));
   }
 }
