@@ -31,21 +31,21 @@ Dans notre cas, il s'agit d'un tout ou rien : détection ou non détection. \
 Mais nous pouvons récupérer les valeurs des accélérations des 2 capteurs et comparer leurs valeurs.\
 De plus nous pouvons réaliser un test statistique sur la détection de chute. (exemple en dessous)
 
-| Cas réel ->     |  Statique    |  Chute     |  Marche     |
-|-----------------|:------------:|:----------:|:-----------:|
-|    Statique     |    99%       |    1%      |      0%     |
-|    Chute        |    1.5%      |    98%     |      0.5%   |
-|    Marche       |     5%       |    25%     |      70%    |
+| Cas réel -> | Statique | Chute | Marche |
+|-------------|:--------:|:-----:|:------:|
+| Statique    |   99%    |  1%   |   0%   |
+| Chute       |   1.5%   |  98%  |  0.5%  |
+| Marche      |    5%    |  25%  |  70%   |
 
 
 Et aussi pour la comparaison des 2 capteurs
 
-|                   |  Capteur1    |  Capteur2  |
-|-------------------|:------------:|:----------:|
-|    Statique       |     99%      |    99%     |
-|    Marche         |     97%      |    98%     |
-|  Chute droite     |     80%      |    98%     |
-|  Chute en avant   |     95%      |    95%     |
+|                | Capteur1 | Capteur2 |
+|----------------|:--------:|:--------:|
+| Statique       |   99%    |   99%    |
+| Marche         |   97%    |   98%    |
+| Chute droite   |   80%    |   98%    |
+| Chute en avant |   95%    |   95%    |
 
 Et ainsi comparer nos 2 capteurs.\
 Certes nous n'avons que des valeurs tout ou rien mais nous pouvons dire par plusieurs paramètres si un capteur est mieux qu'un autre.
@@ -93,3 +93,43 @@ Voici son schéma :
 
 
 
+
+# Le nouveau capteur
+
+Nous rédigeons un tableau comparatif entre les 2 capteurs : 
+
+|                      |      ADXL 345       |      ADXL 359      |
+|----------------------|:-------------------:|:------------------:|
+| Interface            |      SPI, I²C       |      SPI, I²C      |
+| Technologie utilisée |        MEMS         |        MEMS        |
+| Plage de mesure      | ±2g, ±4g, ±8g, ±16g |  ±10g, ±20g, ±40g  |
+| Résolution           |       13 bits       |      20 bits       |
+| Bruit                |     380 µg/√Hz      |     80 µg/√Hz      |
+| 0g Offset            |        ±150g        |       ±125g        |
+| Taille du boîtier    | 3 mm × 5 mm × 1 mm  | 4 mm × 4 mm × 1 mm |
+
+
+**La technologie MEMS (Micro-Electro-Mechanical Systems).**\
+ Un dispositif MEMS est composé de minuscules éléments comme des ressorts, des leviers et des masses mobiles  qui sont gravés sur du silicium.\
+ Lorsqu'une force externe (comme une accélération) agit sur ces éléments, cela provoque un mouvement des masses et viens déformer les ressorts. Ce mouvement viens changer la valeur de capacité, ce qui vient influer sur le signal électrique, nous récupérons ainsi des informations sur l'accélération.
+
+Voici le schéma de l'ADXL 359.
+
+![Alt text](Images/ADXL359Schema.png)
+
+| Pin N° | Mnemonic |                                                                                            Description                                                                                            |
+|--------|:--------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+| 1      |   SCL    |                                                                             Serial Communications Clock for I2C (SCL)                                                                             |
+| 2      |  Vssio   |                                                                           Connected to Pin 6 (VSSIO) to enable I2C mode                                                                           |
+| 3      |   SDA    |                                                                                    Serial Data for I2C (SDA).                                                                                     |
+| 4      |   ASEL   |                                                                           Alternate I2C Address Select for I2C (ASEL).                                                                            |
+| 5      |  Vddio   |                                                                                 Digital Interface Supply Voltage                                                                                  |
+| 6      |  Vssio   |                                                                                          Digital Ground                                                                                           |
+| 7      | RESERVED |                                                                    Reserved. This pin can be connected to ground or left open.                                                                    |
+| 8      | V1P8DIG  |                                 Digital Supply. This pin requires a decoupling capacitor. If VSUPPLY connects to VSS, supply the voltage to this pin externally.                                  |
+| 9      |   Vss    |                                                                                           Analog Ground                                                                                           |
+| 10     | V1P8ANA  |                                  Analog Supply. This pin requires a decoupling capacitor. If VSUPPLY connects to VSS, supply the voltage to this pin externally.                                  |
+| 11     | VSUPPLY  | Supply Voltage. When VSUPPLY equals 2.25 V to 3.6 V, VSUPPLY enables the internal LDO regulators to generate V1P8DIG and V1P8ANA. For VSUPPLY = VSS, V1P8DIG and V1P8ANA are externally supplied. |
+| 12     |   INT1   |                                                                                          Interrupt Pin 1                                                                                          |
+| 13     |   INT2   |                                                                                          Interrupt Pin 2                                                                                          |
+| 14     |   DRDY   |                                                                                          Data Ready Pin.                                                                                          |
