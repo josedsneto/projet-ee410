@@ -1,10 +1,17 @@
 #include <Wire.h>
 #include <ADXL345.h>
+#include <SoftwareSerial.h>
 
 #define FALL_LOW_LEVEL 0.6
 #define FALL_HIGH_LEVEL 1.5
 // Time during which we look to see if there has been a peak in acceleration (in milliseconds)
 #define TIME_FALL_MAX_DETECTION 500
+
+//Bluetooth constants
+#define BT_RX 10  // Connect TX of BT module to pin 10
+#define BT_TX 11  // Connect RX of BT module to pin 11
+
+SoftwareSerial bluetoothStream(BT_RX,BT_TX);
 
 ADXL345 adxl; //variable adxl is an instance of the ADXL345 library
 double xyz[3];
@@ -12,6 +19,9 @@ double xyz[3];
 double ax, ay, az; 
 double module;
 double maxModuleValue = 1;
+
+// Fall button
+const int button = 2;
 
 // Enumeration of the differents states
 enum State {
@@ -27,6 +37,11 @@ long startTime;
 
 
 void setup() {
+    bluetoothStream.begin(9600);
+
+    //Button setup
+    pinMode(button, INPUT);
+
     Serial.begin(9600);
     adxl.powerOn();
 
@@ -77,24 +92,14 @@ void setup() {
 }
 
 void loop() {
-  // int x, y, z;
-  // adxl.readXYZ(&x, &y, &z); //read the accelerometer values and store them in variables  x,y,z
-  // // Output x,y,z values
-  // Serial.print("values of X , Y , Z: ");
-  // Serial.print(x);
-  // Serial.print(" , ");
-  // Serial.print(y);
-  // Serial.print(" , ");
-  // Serial.println(z);
-
   // ----- getValues and calculation
   getAccelerometerValues();
   module = sqrt(ax*ax + ay*ay + az*az); // We calculate de magnitude
-  // printAccelerationAndModule();
-  //printFormatJoseValues();
+  printAccelerationAndModule();
+  printFormatJoseValues();
 
   // The running of the fallDetector => Following an ASM
-  runASM();
+  //runASM();
 
 
   delay(100);
@@ -118,11 +123,25 @@ void printAccelerationAndModule(){
 }
 
 void printFormatJoseValues(){
-  Serial.println("****************************");
-  Serial.println("values of X , Y , Z: -1 , 2 , 23");
-  Serial.print("X="); Serial.print(ax); Serial.println(" g");
-  Serial.print("Y="); Serial.print(ay); Serial.println(" g");
-  Serial.print("Z="); Serial.print(az); Serial.println(" g");
+  if (digitalRead(button) == HIGH)
+  {
+    bluetoothStream.println("****************************");
+    bluetoothStream.println("values of X , Y , Z and button status");
+    bluetoothStream.print("X="); bluetoothStream.print(ax); bluetoothStream.println(" g");
+    bluetoothStream.print("Y="); bluetoothStream.print(ay); bluetoothStream.println(" g");
+    bluetoothStream.print("Z="); bluetoothStream.print(az); bluetoothStream.println(" g");
+    bluetoothStream.print("FallLabel="); bluetoothStream.println("High");  
+  } else {
+    bluetoothStream.println("****************************");
+    bluetoothStream.println("values of X , Y , Z and button status");
+    bluetoothStream.print("X="); bluetoothStream.print(ax); bluetoothStream.println(" g");
+    bluetoothStream.print("Y="); bluetoothStream.print(ay); bluetoothStream.println(" g");
+    bluetoothStream.print("Z="); bluetoothStream.print(az); bluetoothStream.println(" g");
+    bluetoothStream.print("FallLabel="); bluetoothStream.println("Low");
+  }
+  
+  
+  delay(1000);
 
 }
 

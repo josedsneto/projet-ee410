@@ -1,54 +1,33 @@
-/*
-  Software serial multple serial test
-
- Receives from the hardware serial, sends to software serial.
- Receives from software serial, sends to hardware serial.
-
- The circuit:
- * RX is digital pin 10 (connect to TX of other device)
- * TX is digital pin 11 (connect to RX of other device)
-
- Note:
- Not all pins on the Mega and Mega 2560 support change interrupts,
- so only the following can be used for RX:
- 10, 11, 12, 13, 50, 51, 52, 53, 62, 63, 64, 65, 66, 67, 68, 69
-
- Not all pins on the Leonardo and Micro support change interrupts,
- so only the following can be used for RX:
- 8, 9, 10, 11, 14 (MISO), 15 (SCK), 16 (MOSI).
-
- created back in the mists of time
- modified 25 May 2012
- by Tom Igoe
- based on Mikal Hart's example
-
- This example code is in the public domain.
-
- */
 #include <SoftwareSerial.h>
 
-SoftwareSerial mySerial(10, 11); // RX, TX
+// Define the RX and TX pins for Bluetooth module
+#define BT_RX 10  // Connect TX of BT module to pin 10
+#define BT_TX 11  // Connect RX of BT module to pin 11
+
+// Create a software serial object for Bluetooth
+SoftwareSerial bluetooth(BT_RX, BT_TX);
 
 void setup() {
-  // Open serial communications and wait for port to open:
-  Serial.begin(57600);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
-
-
-  Serial.println("Goodnight moon!");
-
-  // set the data rate for the SoftwareSerial port
-  mySerial.begin(9600);
-  mySerial.println("Hello, world?");
+  // Start the built-in serial monitor
+  Serial.begin(9600); // For monitoring on Serial Monitor
+  bluetooth.begin(9600); // Match the baud rate of your Bluetooth module
+  
+  Serial.println("Bluetooth Ready. Sending 'hello world'...");
 }
 
-void loop() { // run over and over
-  if (mySerial.available()) {
-    Serial.write(mySerial.read());
+void loop() {
+  if (bluetooth.available() > 0) {
+    // Read the incoming message
+    Serial.print("Received: ");
+    Serial.println(bluetooth.readStringUntil('\n'));
   }
-  if (Serial.available()) {
-    mySerial.write(Serial.read());
+
+  if (Serial.available() > 0) {
+    // Read the incoming message
+    bluetooth.print("Received: ");
+    bluetooth.println(Serial.readStringUntil('\n'));
   }
+
+  // Wait for 1 second
+  delay(1000);
 }
