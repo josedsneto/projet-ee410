@@ -2,6 +2,7 @@
 #include <ADXL345.h>
 #include <SoftwareSerial.h>
 
+#define BUTTON_PIN 9
 
 #define FALL_LOW_LEVEL 0.6
 #define FALL_HIGH_LEVEL 1.5
@@ -14,6 +15,7 @@ double xyz[3];
 double ax, ay, az; 
 double module;
 double maxModuleValue = 1;
+int buttonValue;
 
 
 SoftwareSerial mySerial(10, 11); // RX, TX
@@ -101,7 +103,7 @@ void loop() {
   module = sqrt(ax*ax + ay*ay + az*az); // We calculate de magnitude
   // printAccelerationAndModule();
   //printFormatJoseValues();
-
+  buttonValue = digitalRead(BUTTON_PIN);
   // The running of the fallDetector => Following an ASM
   //runASM();
   
@@ -134,7 +136,10 @@ void BluetoothAccelerationAndModule(){
   mySerial.print(",");
   mySerial.print(az);
   mySerial.print(",");
-  mySerial.println(module);
+  mySerial.print(module);
+  mySerial.print(",");
+  mySerial.println(buttonValue);
+
 }
 
 void printFormatJoseValues(){
