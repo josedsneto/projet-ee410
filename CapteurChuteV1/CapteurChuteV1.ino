@@ -90,11 +90,11 @@ void loop() {
   // ----- getValues and calculation
   getAccelerometerValues();
   module = sqrt(ax*ax + ay*ay + az*az); // We calculate de magnitude
-  // printAccelerationAndModule();
+  printAccelerationAndModule();
   //printFormatJoseValues();
 
   // The running of the fallDetector => Following an ASM
-  runASM();
+  //runASM();
 
 
   delay(100);
