@@ -8,6 +8,8 @@
 #define FALL_HIGH_LEVEL 1.5
 // Time during which we look to see if there has been a peak in acceleration (in milliseconds)
 #define TIME_FALL_MAX_DETECTION 500
+#define CHUTE_ERROR 0.4  //Margin d'erreur sur laquel une personne peut buger sans que le système comprendre comme
+                         //false chute
 
 ADXL345 adxl; //variable adxl is an instance of the ADXL345 library
 double xyz[3];
@@ -16,7 +18,7 @@ double ax, ay, az;
 double module;
 double maxModuleValue = 1;
 int buttonValue;
-
+bool chuteLabel = false;  //when in waiting state, this label is resposible for passing to the FallDetected.
 
 SoftwareSerial mySerial(10, 11); // RX, TX
 
@@ -24,6 +26,7 @@ SoftwareSerial mySerial(10, 11); // RX, TX
 enum State {
   Idle,
   StartFall,
+  WaitFall,
   FallDetected
 };
 
@@ -31,6 +34,9 @@ enum State {
 State CS = Idle;
 
 long startTime;
+long startWaitTime;
+long startFallTime;
+long startOkTime;
 
 
 void setup() {
@@ -105,7 +111,7 @@ void loop() {
   //printFormatJoseValues();
   buttonValue = digitalRead(BUTTON_PIN);
   // The running of the fallDetector => Following an ASM
-  //runASM();
+  runASM();
   
   BluetoothAccelerationAndModule();
 
@@ -155,44 +161,100 @@ void runASM() {
   // Notre diagramme d'Etat
   switch (CS) {
     case Idle:
-      // Current working 
+      // Current working
+      //Serial.print("En attente. module: ");
+      //Serial.print(module);
+      Serial.println("idle"); 
 
       if(module<FALL_LOW_LEVEL) { // Maybe there is a fall
         CS = StartFall;
-        maxModuleValue = 1; // Valeur neutre
-        startTime = millis(); // Start Measuring time
+        //maxModuleValue = 1; // Valeur neutre
+        //startTime = millis(); // Start Measuring time
       }
 
       break;
 
     case StartFall:
-      if ((millis() - startTime) > TIME_FALL_MAX_DETECTION) { // Si on a dépassé le temps d'enregistrement des valeurs
-        if (maxModuleValue > FALL_HIGH_LEVEL) { // Il y a bien eu une chute
-          CS = FallDetected;
-        }
-        else {
-          CS = Idle;
-          Serial.print("Pas de chute détectée finalent, max Module : ");
-          Serial.println(maxModuleValue);
-        }
+      startTime = millis();
+      
+      while ((millis() - startTime) < TIME_FALL_MAX_DETECTION) { // Si on a dépassé le temps d'enregistrement des valeurs
+        getAccelerometerValues();
+        module = sqrt(ax*ax + ay*ay + az*az);
+        maxModuleValue = max(maxModuleValue, module);
+      }
+
+      if (maxModuleValue > FALL_HIGH_LEVEL) { // Il y a bien eu une chute
+          CS = WaitFall;
       }
       else {
-        maxModuleValue = max(maxModuleValue, module);
+          CS = Idle;
+          //Serial.print("Pas de chute détectée finalent, max Module : ");
+          //Serial.println(maxModuleValue);
+          //Serial.print(module);
+          Serial.println("ok");
       }
 
       break;
 
+    case WaitFall:
+      startWaitTime = millis();
+      
+      while ((millis() - startWaitTime) < 5000) { // On attend 5 seconds pour voir si la personne va bien
+        getAccelerometerValues();
+        module = sqrt(ax*ax + ay*ay + az*az);
+        //Serial.println(module);
+        
+        if ((0.9 - CHUTE_ERROR < module) and (module < 0.9 + CHUTE_ERROR)) {
+          CS = WaitFall;
+          //Serial.println("Anomalie détectée, est-ce qu'il y un chute");
+          //Serial.print(module);
+          Serial.println("waiting");
+          delay(100);
+          chuteLabel = true;
+
+        } else {
+          startOkTime = millis();
+          CS = Idle;
+          chuteLabel = false;
+          //Serial.println("Alarme false");
+          //Serial.println("Retour etat initial");
+          //Serial.print(module);
+          
+          while((millis() - startOkTime) < 5000) {
+            Serial.println("ok");
+            delay(100);
+          }
+          
+          break;
+        }
+      }
+      
+      if (chuteLabel == true) {
+        CS = FallDetected;
+      }else {
+        CS = Idle;
+      }
+      break;
+
     case FallDetected:
-      Serial.print("Chute détectée !!!!!!!!!!!!!!!!!!!!!! max :");
-      Serial.println(maxModuleValue);
-      delay(5000);
+      startFallTime = millis();
+
+      while((millis() - startFallTime) < 5000) {
+        Serial.println("danger");
+        delay(100);
+      }
+    
+      //Serial.print("Chute détectée !!!!!!!!!!!!!!!!!!!!!! max :");
+      //Serial.println(maxModuleValue);
+      
+      //delay(5000);
       CS = Idle;
-      Serial.println("Retour etat initial");
+      //Serial.println("Retour etat initial");
 
       break;
     
     default :
-      Serial.println("Not a State, Error");
+      //Serial.println("Not a State, Error");
       delay(1000);
       break;
   }
