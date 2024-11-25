@@ -113,7 +113,7 @@ void loop() {
   // The running of the fallDetector => Following an ASM
   runASM();
   
-  BluetoothAccelerationAndModule();
+  //BluetoothAccelerationAndModule();
 
 
   delay(100);
@@ -162,9 +162,9 @@ void runASM() {
   switch (CS) {
     case Idle:
       // Current working
-      //Serial.print("En attente. module: ");
-      //Serial.print(module);
-      Serial.println("idle"); 
+      Serial.print(module);
+      Serial.println(",idle");
+      mySerial.println("idle"); 
 
       if(module<FALL_LOW_LEVEL) { // Maybe there is a fall
         CS = StartFall;
@@ -181,6 +181,11 @@ void runASM() {
         getAccelerometerValues();
         module = sqrt(ax*ax + ay*ay + az*az);
         maxModuleValue = max(maxModuleValue, module);
+
+        if (module > FALL_HIGH_LEVEL) {
+          Serial.print(module);
+          Serial.println(",analyse");  
+        }
       }
 
       if (maxModuleValue > FALL_HIGH_LEVEL) { // Il y a bien eu une chute
@@ -190,8 +195,9 @@ void runASM() {
           CS = Idle;
           //Serial.print("Pas de chute détectée finalent, max Module : ");
           //Serial.println(maxModuleValue);
-          //Serial.print(module);
-          Serial.println("ok");
+          Serial.print(module);
+          Serial.print(",ok");
+          mySerial.println("ok");
       }
 
       break;
@@ -206,9 +212,9 @@ void runASM() {
         
         if ((0.9 - CHUTE_ERROR < module) and (module < 0.9 + CHUTE_ERROR)) {
           CS = WaitFall;
-          //Serial.println("Anomalie détectée, est-ce qu'il y un chute");
-          //Serial.print(module);
-          Serial.println("waiting");
+          Serial.print(module);
+          Serial.println(",waiting");
+          mySerial.println("waiting");
           delay(100);
           chuteLabel = true;
 
@@ -216,12 +222,12 @@ void runASM() {
           startOkTime = millis();
           CS = Idle;
           chuteLabel = false;
-          //Serial.println("Alarme false");
-          //Serial.println("Retour etat initial");
-          //Serial.print(module);
+          
           
           while((millis() - startOkTime) < 5000) {
-            Serial.println("ok");
+            Serial.print(module);
+            Serial.println(",ok");
+            mySerial.println("ok");
             delay(100);
           }
           
@@ -238,23 +244,24 @@ void runASM() {
 
     case FallDetected:
       startFallTime = millis();
+      CS = Idle;
 
       while((millis() - startFallTime) < 5000) {
-        Serial.println("danger");
+        Serial.print(module);
+        Serial.println(",danger");
+        mySerial.println("danger");
         delay(100);
       }
     
       //Serial.print("Chute détectée !!!!!!!!!!!!!!!!!!!!!! max :");
       //Serial.println(maxModuleValue);
-      
-      //delay(5000);
-      CS = Idle;
+      //delay(5000);      
       //Serial.println("Retour etat initial");
 
       break;
     
     default :
-      //Serial.println("Not a State, Error");
+      Serial.println("Not a State, Error");
       delay(1000);
       break;
   }
