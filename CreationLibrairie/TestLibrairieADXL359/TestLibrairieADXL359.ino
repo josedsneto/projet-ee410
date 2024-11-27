@@ -48,8 +48,8 @@ void setup() {
   // ===== adxl.powerOn(); // cf datasheet page 14
   Wire.begin();        // join i2c bus (address optional for master)
   //Turning on the ADXL359
-  setRegisterBit(ADXL359_POWER_CTL, 0, 1); // Go to Standby Mode, must go to measurment mode after setup. TODO***
-  delay(10);
+  //setRegisterBit(ADXL359_POWER_CTL, 0, 1); // Go to Standby Mode, must go to measurment mode after setup. TODO***
+  //delay(10);
 
   // =====  //set activity/ inactivity thresholds (0-255)
   // ===== adxl.setActivityThreshold(75); //62.5mg per increment
@@ -59,27 +59,33 @@ void setup() {
   // adxl.setActivityX(1);
 
   // Define low pass filter at 125 Hz
-  writeTo(ADXL359_FILTER, 0x03);
+  //writeTo(ADXL359_FILTER, 0x03);
 
-  setRegisterBit(ADXL359_POWER_CTL, 0, 0); // Go to measurment mode
+  //setRegisterBit(ADXL359_POWER_CTL, 0, 0); // Go to measurment mode
 
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   // adxl.getAcceleration(xyz);
-  getAcceleration(xyz);
-  getAccelerometerValues();
-  module = sqrt(ax*ax + ay*ay + az*az); // We calculate de magnitude
-  printAccelerationAndModule();
-  delay(200); 
+  // getAcceleration(xyz);
+  // getAccelerometerValues();
+  // module = sqrt(ax*ax + ay*ay + az*az); // We calculate de magnitude
+  // printAccelerationAndModule();
+  // delay(200); 
 
-  count++;
-  if (count > 10) {// every seconds
-  count = 0;
-  readFrom(ADXL359_RANGE,  1, _buff);
-  Serial.println(_buff[0]);
-  }
+  // count++;
+  // if (count > 10) {// every seconds
+  // count = 0;
+  // readFrom(ADXL359_RANGE,  1, _buff);
+  // Serial.println(_buff[0]);
+  //}
+
+  // readFrom(ADXL359_DATAX3, 1, _buff);
+  // Serial.println(_buff[0], HEX);
+  // delay(1000);
+
+
 }
 
 void writeTo (byte address, byte val) {
@@ -148,7 +154,7 @@ void readXYZ(int* x, int* y, int* z) {
 void readFrom(byte address, int num, byte _buff[]) {
     Wire.beginTransmission(ADXL359_DEVICE); // start transmission to device
     Wire.write(address);             // sends address to read from
-    Wire.endTransmission();         // end transmission
+    Wire.endTransmission(false);         // end transmission
 
     Wire.beginTransmission(ADXL359_DEVICE); // start transmission to device
     Wire.requestFrom(ADXL359_DEVICE, num);    // request 6 bytes from device
