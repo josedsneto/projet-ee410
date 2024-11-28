@@ -4,7 +4,7 @@ import serial
 from PIL import Image, ImageTk
 
 # Set up serial communication
-interface = "ttyUSB0"
+interface = "rfcomm0"
 ser = serial.Serial(f"/dev/{interface}", 9600, timeout=1)
 
 # Initialize Tkinter window
