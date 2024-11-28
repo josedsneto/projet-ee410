@@ -1,17 +1,17 @@
 #include <Wire.h>
 
-double xyz[3];
+double xyz359[3];
 // Les valeurs de l'accélération suivant les différents axes
-double ax, ay, az; 
-double module;
+double ax359, ay359, az359; 
+double module359;
 
 // =========================Valeurs pour la librairie =========================
 
-byte _buff[9] ;    //6 bytes buffer for saving data read from the device
-double gains[3];        // counts to Gs
-bool status;           // set when error occurs
+byte _buff359[9] ;    //6 bytes buffer for saving data read from the device
+double gains359[3];        // counts to Gs
+bool status359;           // set when error occurs
 // see error code for details
-byte error_code;       // Initial state
+byte error_code359;       // Initial state
 
 #define ADXL359_DEVICE (0x1D)    // ADXL359 device address for I2C
 #define ADXL359_TO_READ (9)      // num of bytes we are going to read each time (two bytes for each axis)
@@ -23,6 +23,8 @@ byte error_code;       // Initial state
 #define ADXL359_READ_ERROR 1 // problem reading accel
 #define ADXL359_BAD_ARG    2 // bad method argument
 
+
+#define ADXL359_STATUS 0x04
 #define ADXL359_THRESH_ACT_H 0x25 // Registre du theresold activation
 #define ADXL359_THRESH_ACT_L 0x26 // Registre du theresold activation
 #define ADXL359_ACT_COUNT 0x27 // Number of consecutive events above threshold (from ACT_THRESH) required to detect activity
@@ -30,105 +32,83 @@ byte error_code;       // Initial state
 #define ADXL359_POWER_CTL 0x2d
 #define ADXL359_RANGE 0x2C // Setting the range
 #define ADXL359_FILTER 0x28 // Filter settings
+#define ADXL359_OFFSET_X_H 0x1E
 
-int count = 0;
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  // //for 2g
-  // gains[0] = 0.00376390; // cf datasheet, ceci peut être calculé !!! TODO***
-  // gains[1] = 0.00376009;
-  // gains[2] = 0.00349265;
-  // for 8g
-  gains[0] = 1;//0.0000195; // cf datasheet, ceci peut être calculé !!! TODO***
-  gains[1] = 1;//0.0000195;
-  gains[2] = 1;//0.0000195;
+  //for 20g
+  gains359[0] = 0.000039; gains359[1] = 0.000039; gains359[2] = 0.000039;
+  // for 10g
+  // gains359[0] = 0.0000195;   gains359[1] = 0.0000195;   gains359[2] = 0.0000195;
 
-  // ===== adxl.powerOn(); // cf datasheet page 14
-  Wire.begin();        // join i2c bus (address optional for master)
+  // Start communication
+  Wire.begin();
+
   //Turning on the ADXL359
-  //setRegisterBit(ADXL359_POWER_CTL, 0, 1); // Go to Standby Mode, must go to measurment mode after setup. TODO***
-  //delay(10);
+  setRegisterBit359(ADXL359_POWER_CTL, 0, 1); // Go to Standby Mode, must go to measurment mode after setup.
+  delay(100);
 
-  // =====  //set activity/ inactivity thresholds (0-255)
-  // ===== adxl.setActivityThreshold(75); //62.5mg per increment
-  // ==================== Potentiellement pas besoin
+  // Set range to +- 20g
+  setRegisterBit359(ADXL359_RANGE, 0, 0);
+  setRegisterBit359(ADXL359_RANGE, 1, 1);
+  
 
-  // //look of activity movement on this axes - 1 == on; 0 == off
-  // adxl.setActivityX(1);
-
-  // Define low pass filter at 125 Hz
-  //writeTo(ADXL359_FILTER, 0x03);
-
-  //setRegisterBit(ADXL359_POWER_CTL, 0, 0); // Go to measurment mode
+  setRegisterBit359(ADXL359_POWER_CTL, 0, 0); // Go to measurment mode
 
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  // adxl.getAcceleration(xyz);
-  // getAcceleration(xyz);
-  // getAccelerometerValues();
-  // module = sqrt(ax*ax + ay*ay + az*az); // We calculate de magnitude
-  // printAccelerationAndModule();
-  // delay(200); 
-
-  // count++;
-  // if (count > 10) {// every seconds
-  // count = 0;
-  // readFrom(ADXL359_RANGE,  1, _buff);
-  // Serial.println(_buff[0]);
-  //}
-
-  // readFrom(ADXL359_DATAX3, 1, _buff);
-  // Serial.println(_buff[0], HEX);
-  // delay(1000);
-
+  getAcceleration359(xyz359);
+  getAccelerometerValues359();
+  module359 = sqrt(ax359*ax359 + ay359*ay359 + az359*az359); // We calculate de magnitude
+  printAccelerationAndModule359();
+  delay(200); 
 
 }
 
-void writeTo (byte address, byte val) {
+void writeTo359 (byte address, byte val) {
     Wire.beginTransmission(ADXL359_DEVICE); // start transmission to device
     Wire.write(address);             // send register address
     Wire.write(val);                 // send value to write
     Wire.endTransmission();         // end transmission
 }
 
-bool getRegisterBit(byte regAdress, int bitPos) {
+bool getRegisterBit359(byte regAdress, int bitPos) {
     byte _b;
-    readFrom(regAdress, 1, &_b);
+    readFrom359(regAdress, 1, &_b);
     return ((_b >> bitPos) & 1);
 }
 
-void setRegisterBit(byte regAdress, int bitPos, bool state) {
+void setRegisterBit359(byte regAdress, int bitPos, bool state) {
     byte _b;
-    readFrom(regAdress, 1, &_b);
+    readFrom359(regAdress, 1, &_b);
     if (state) {
         _b |= (1 << bitPos);  // forces nth bit of _b to be 1.  all other bits left alone.
     } else {
         _b &= ~(1 << bitPos); // forces nth bit of _b to be 0.  all other bits left alone.
     }
-    writeTo(regAdress, _b);
+    writeTo359(regAdress, _b);
 }
 
 
-void getAcceleration(double* xyz) {
+void getAcceleration359(double* xyz) {
     int i;
     int xyz_int[3];
-    readAccel(xyz_int);
+    readAccel359(xyz_int);
     for (i = 0; i < 3; i++) {
-        xyz[i] = xyz_int[i] * gains[i];
+        xyz359[i] = xyz_int[i] * gains359[i];
     }
 }
 
 // Reads the acceleration into three variable x, y and z
-void readAccel(int* xyz) {
-    readXYZ(xyz, xyz + 1, xyz + 2);
+void readAccel359(int* xyz) {
+    readXYZ359(xyz, xyz + 1, xyz + 2);
 }
-void readXYZ(int* x, int* y, int* z) {
+void readXYZ359(int* x, int* y, int* z) {
     uint8_t buffer[9]; // Buffer pour lire 3 axes (3 octets par axe)
-    readFrom(ADXL359_DATAX3, 9, buffer); // Lire 9 octets à partir du registre DATAX0
+    readFrom359(ADXL359_DATAX3, 9, buffer); // Lire 9 octets à partir du registre DATAX0
 
     // Extraction des données brutes sur 20 bits pour chaque axe
     *x = (int)((((uint32_t)(buffer[0])) << 12) | 
@@ -151,7 +131,7 @@ void readXYZ(int* x, int* y, int* z) {
 
 
 // Reads num bytes starting from address register on device in to _buff array
-void readFrom(byte address, int num, byte _buff[]) {
+void readFrom359(byte address, int num, byte _buff[]) {
     Wire.beginTransmission(ADXL359_DEVICE); // start transmission to device
     Wire.write(address);             // sends address to read from
     Wire.endTransmission(false);         // end transmission
@@ -165,26 +145,26 @@ void readFrom(byte address, int num, byte _buff[]) {
         i++;
     }
     if (i != num) {
-        status = ADXL359_ERROR;
-        error_code = ADXL359_READ_ERROR;
+        status359 = ADXL359_ERROR;
+        error_code359 = ADXL359_READ_ERROR;
     }
     Wire.endTransmission();         // end transmission
 }
 
 
-void getAccelerometerValues() {
-  getAcceleration(xyz);
-  ax = xyz[0]; ay = xyz[1]; az = xyz[2];
+void getAccelerometerValues359() {
+  getAcceleration359(xyz359);
+  ax359 = xyz359[0]; ay359 = xyz359[1]; az359 = xyz359[2];
 }
 
-void printAccelerationAndModule(){
-  Serial.print(ax);
+void printAccelerationAndModule359(){
+  Serial.print(ax359);
   Serial.print(",");
-  Serial.print(ay);
+  Serial.print(ay359);
   Serial.print(",");
-  Serial.print(az);
+  Serial.print(az359);
   Serial.print(",");
-  Serial.println(module);
+  Serial.println(module359);
 }
 
 
