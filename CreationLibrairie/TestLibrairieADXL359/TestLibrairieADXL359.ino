@@ -1,9 +1,18 @@
 #include <Wire.h>
+#include <ADXL345.h>
+
 
 double xyz359[3];
 // Les valeurs de l'accélération suivant les différents axes
 double ax359, ay359, az359; 
 double module359;
+
+ADXL345 adxl; //variable adxl is an instance of the ADXL345 library
+double xyz[3];
+// Les valeurs de l'accélération suivant les différents axes
+double ax, ay, az; 
+double module;
+double maxModuleValue = 1;
 
 // =========================Valeurs pour la librairie =========================
 
@@ -43,6 +52,19 @@ void setup() {
   // for 10g
   // gains359[0] = 0.0000195;   gains359[1] = 0.0000195;   gains359[2] = 0.0000195;
 
+  adxl.powerOn();
+
+    //set activity/ inactivity thresholds (0-255)
+    adxl.setActivityThreshold(75); //62.5mg per increment
+    adxl.setInactivityThreshold(75); //62.5mg per increment
+    adxl.setTimeInactivity(10); // how many seconds of no activity is inactive?
+
+    //look of activity movement on this axes - 1 == on; 0 == off
+    adxl.setActivityX(1);
+    adxl.setActivityY(1);
+    adxl.setActivityZ(1);
+
+
   // Start communication
   Wire.begin();
 
@@ -63,7 +85,10 @@ void loop() {
   getAcceleration359(xyz359);
   getAccelerometerValues359();
   module359 = sqrt(ax359*ax359 + ay359*ay359 + az359*az359); // We calculate de magnitude
-  printAccelerationAndModule359();
+  getAccelerometerValues();
+  module = sqrt(ax*ax + ay*ay + az*az); // We calculate de magnitude
+  //printAccelerationAndModule();
+  //printAccelerationAndModule359();
   delay(200); 
 
 }
@@ -165,6 +190,22 @@ void printAccelerationAndModule359(){
   Serial.print(az359);
   Serial.print(",");
   Serial.println(module359);
+}
+
+
+void getAccelerometerValues() {
+  adxl.getAcceleration(xyz);
+  ax = xyz[0]; ay = xyz[1]; az = xyz[2];
+}
+
+void printAccelerationAndModule(){
+  Serial.print(ax);
+  Serial.print(",");
+  Serial.print(ay);
+  Serial.print(",");
+  Serial.print(az);
+  Serial.print(",");
+  Serial.println(module);
 }
 
 

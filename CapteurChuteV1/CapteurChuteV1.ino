@@ -97,7 +97,7 @@ void loop() {
   //runASM();
 
 
-  delay(100);
+  delay(10);
 
 }
 

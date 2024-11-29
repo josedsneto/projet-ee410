@@ -105,7 +105,7 @@ Nous rédigeons un tableau comparatif entre les 2 capteurs :
 | Plage de mesure      | ±2g, ±4g, ±8g, ±16g |  ±10g, ±20g, ±40g  |
 | Résolution           |       13 bits       |      20 bits       |
 | Bruit                |     380 µg/√Hz      |     80 µg/√Hz      |
-| 0g Offset            |        ±150g        |       ±125g        |
+| 0g Offset            |        ±150 mg      |       ±125 mg      |
 | Taille du boîtier    | 3 mm × 5 mm × 1 mm  | 4 mm × 4 mm × 1 mm |
 
 
